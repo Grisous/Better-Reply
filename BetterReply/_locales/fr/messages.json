@@ -1,0 +1,74 @@
+{
+  "from": {
+    "message": "De"
+  },
+  "to": {
+    "message": "Pour"
+  },
+  "cc": {
+    "message": "Cc"
+  },
+  "content emails": {
+    "message": "Mail extrait"
+  },
+  "email_list": {
+    "message": "Répondre à certains"
+  },
+  "selected": {
+    "message": "sélectionné"
+  },
+  "reply_to": {
+    "message": "Répondre à"
+  },
+  "reply_to_all": {
+    "message": "Répondre à tous en copie"
+  },
+  "reply_to_directly": {
+    "message": "Répondre directement à"
+  },
+  "reply_to_selected_list": {
+    "message": "Répondre à la liste sélectionnée"
+  },
+  "empty_reply_list": {
+    "message": "Vider la liste"
+  },
+  "found_email_address": {
+    "message": "$COUNT$ adresse(s) e-mail trouvée(s)",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "0"
+      }
+    }
+  },
+  "finding_email_addresses": {
+    "message": "Recherche d'adresses e-mail"
+  },
+  "sortingOptions": {
+    "message": "Options de tri"
+  },
+  "sortEmailsBy": {
+    "message": "Trier les e-mail par"
+  },
+  "alphabeticalOrder": {
+    "message": "Ordre alphabétique"
+  },
+  "categoriesOrder": {
+    "message": "Catégories"
+  },
+  "warning_continue":{
+    "message": "Continuer"
+  },
+  "warning_cancel": {
+    "message": "Annuler"
+  },
+  "warning_title" : {
+    "message": "ATTENTION !"
+  },
+  "warning_text": {
+    "message": "Vous aviez reçu ce message en copie privée :\n certains de ces destinataires ne savent pas que vous en étiez destinataire caché (CCi).\nVoulez-vous continuer ?"
+  },
+  "description": {
+    "message": "Extension pour répondre à certaines adresses e-mail extraites du corps et de l'en-tête d'un message."
+  }
+}

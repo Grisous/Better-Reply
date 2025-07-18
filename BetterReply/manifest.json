@@ -1,0 +1,79 @@
+{
+  "manifest_version": 3,
+  "version": "1.0",
+  "author": "BARBIER Jules and ZHOU Elise",
+  "name": "Better reply",
+  "description": "__MSG_description__",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "betterreply@yoursite.com",
+      "strict_min_version": "128.0"
+    }
+  },
+  "icons": {
+    "16": "images/arrow_reply_16px.svg",
+    "32": "images/arrow_reply_16px.svg",
+    "64": "images/arrow_reply_16px.svg",
+    "128": "images/arrow_reply_16px.svg",
+    "256": "images/arrow_reply_16px.svg"
+  },
+  "permissions": [
+    "accountsRead",
+    "messagesRead",
+    "menus",
+    "compose",
+    "webNavigation",
+    "scripting",
+    "storage"
+  ],
+  "message_display_action": {
+    "type": "menu",
+    "default_title": "__MSG_email_list__",
+    "theme_icons": [
+      {
+        "dark": "images/betterReplyDark.png",
+        "light": "images/betterReplyLight.png",
+        "size": 16
+      },
+      {
+        "dark": "images/betterReplyDark.png",
+        "light": "images/betterReplyLight.png",
+        "size": 32
+      },
+      {
+        "dark": "images/betterReplyDark.png",
+        "light": "images/betterReplyLight.png",
+        "size": 64
+      },
+      {
+        "dark": "images/betterReplyDark.png",
+        "light": "images/betterReplyLight.png",
+        "size": 128
+      },
+      {
+        "dark": "images/betterReplyDark.png",
+        "light": "images/betterReplyLight.png",
+        "size": 256
+      }
+    ]
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "all_frames": true,
+      "js": [
+        "content-script.js"
+      ]
+    }
+  ],
+  "default_locale": "en"
+}

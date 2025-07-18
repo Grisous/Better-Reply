@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Extension Options</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 10px;
+      background-color: #1c1b22;
+      color: #f9f9fa;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+    select {
+      font-size: 1em;
+      padding: 5px;
+    }
+    @media (prefers-color-scheme: light) {
+      body {
+        background-color: #f9f9fa;
+        color: #1c1b22;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2 id="sortingOptions">Sorting Options</h2>
+  <label id="sortEmailsBy" for="sortOption">Sort emails by:</label>
+  <select id="sortOption">
+    <option id="alphabetical" value="alphabetical">Alphabetical order</option>
+    <option id="categories" value="categories">Categories</option>
+  </select>
+
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+  "from": {
+    "message": "From"
+  },
+  "to": {
+    "message": "To"
+  },
+  "cc": {
+    "message": "Cc"
+  },
+  "content emails": {
+    "message": "Content emails"
+  },
+  "email_list": {
+    "message": "Better reply to"
+  },
+  "selected": {
+    "message": "selected"
+  },
+  "reply_to": {
+    "message": "Reply to"
+  },
+  "reply_to_all": {
+    "message": "Reply to all as CC"
+  },
+  "reply_to_direcly": {
+    "message": "Reply directly to"
+  },
+  "reply_to_selected_list": {
+    "message": "Reply to selected list"
+  },
+  "empty_reply_list": {
+    "message": "Empty reply list"
+  },
+  "found_email_address": {
+    "message": "Found $COUNT$ email address.es",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "0"
+      }
+    }
+  },
+  "finding_email_addresses": {
+    "message": "Finding email addresses"
+  },
+  "sortingOptions": {
+    "message": "Sorting options"
+  },
+  "sortEmailsBy": {
+    "message": "Sort emails by"
+  },
+  "alphabeticalOrder": {
+    "message": "Alphabetical order"
+  },
+  "categoriesOrder": {
+    "message": "Categories"
+  },
+  "warning_continue":{
+    "message": "Continue"
+  },
+  "warning_cancel": {
+    "message": "Cancel"
+  },
+  "warning_title" : {
+    "message": "WARNING !"
+  },
+  "warning_text": {
+    "message": "You received this message as a private copy:\nsome of these recipients don't know that you were a hidden recipient (CCi).\nDo you want to continue?"
+  },
+  "description": {
+    "message": "Better reply to emails by extracting email addresses from the content of the message and allowing you to reply to them directly."
+  }
+}
