@@ -32,17 +32,26 @@ async function findEmailAddresses() {
 
   // <= End of code from therealrobster
 
-  // Find cc, to and reply-to email addresses
+  // Find cc, to and reply-to email addresses without noreply emails
   const fullMessage = await browser.messages.getFull(message.id);
+  // Factorized noreply email regex check
+  const isNoReply = (email) =>
+    /^(.*[._-])?(do[._-]?not|no)[._-]?reply([._+-].*)?@/i.test(email);
+
   const ccEmails =
     fullMessage.headers.cc?.[0]
       .match(emailPattern)
-      .map((email) => email.toLowerCase()) || [];
-  const toEmails = fullMessage.headers.to?.[0].match(emailPattern) || [];
+      .map((email) => email.toLowerCase())
+      .filter((email) => !isNoReply(email)) || [];
+  const toEmails =
+    fullMessage.headers.to?.[0]
+      .match(emailPattern)
+      .filter((email) => !isNoReply(email)) || [];
   const replyToEmails =
     fullMessage.headers["reply-to"]?.[0]
       .match(emailPattern)
-      .map((email) => email.toLowerCase()) || [];
+      .map((email) => email.toLowerCase())
+      .filter((email) => !isNoReply(email)) || [];
 
   let part = "";
   // If there are no inline text parts, use nothing
@@ -59,7 +68,12 @@ async function findEmailAddresses() {
   const emails = [];
   switch (sortOption) {
     case "alphabetical": {
-      emails.push(...(part.match(emailPattern) || [])); // Ensure `emails` is always an array
+      // Add emails from the body, filtering out noreply addresses
+      // Extract emails from the body, filter out noreply addresses, and add them
+      const bodyEmails = (part.match(emailPattern) || []).filter(
+        (email) => !isNoReply(email)
+      );
+      emails.push(...bodyEmails);
 
       // Push all emails together
       emails.push(fromEmail);
@@ -71,8 +85,10 @@ async function findEmailAddresses() {
       break;
     }
     case "categories": {
-      emails.push(browser.i18n.getMessage("from"));
-      emails.push(fromEmail);
+      if (fromEmail && !isNoReply(fromEmail)) {
+        emails.push(browser.i18n.getMessage("from"));
+        emails.push(fromEmail);
+      }
       if (toEmails.length > 0) {
         // Only add CC emails that are not already in emails
         const uniqueTo = toEmails.filter(
@@ -118,10 +134,17 @@ async function findEmailAddresses() {
           );
         }
       }
-      if (part.match(emailPattern) && part.match(emailPattern).length > 0) {
+      const matchedContentEmails = part.match(emailPattern);
+      if (
+        matchedContentEmails &&
+        matchedContentEmails.filter((email) => !isNoReply(email)).length > 0
+      ) {
         // Only add content emails that are not already in emails
         const contentEmails =
-          part.match(emailPattern).map((email) => email.toLowerCase()) || [];
+          part
+            .match(emailPattern)
+            .map((email) => email.toLowerCase())
+            .filter((email) => !isNoReply(email)) || [];
         const uniqueContent = contentEmails.filter(
           (e) => !emails.includes(e.toLowerCase())
         );
@@ -137,6 +160,9 @@ async function findEmailAddresses() {
       break;
     }
   }
+
+  console.log("Found email addresses:", emails);
+
   // Code from therealrobster =>
 
   // Normalize emails to lowercase and remove duplicates
@@ -225,24 +251,19 @@ async function getSelectedText() {
     currentWindow: true,
   });
   const tabId = tabs?.id;
-  const frames = await browser.webNavigation.getAllFrames({ tabId });
   if (!tabId) return;
 
   // Inject the content script to get the selected text
   await injectScript(tabId);
 
-  // Loop through all frames to get the selected text
-  for (const frame of frames) {
-    try {
-      const res = await browser.tabs.sendMessage(
-        tabId,
-        { command: "getSelectionText" },
-        { frameId: frame.frameId }
-      );
-      return res.text;
-    } catch (e) {
-      console.error("Error getting selected text:", e);
-    }
+  // Get the selected text
+  try {
+    const res = await browser.tabs.sendMessage(tabId, {
+      command: "getSelectionText",
+    });
+    return res.text;
+  } catch (e) {
+    console.error("Error getting selected text:", e);
   }
   return ""; // Return an empty string if no selection is found
 }
@@ -330,9 +351,7 @@ async function composeReply(toList = replyList, ccList = Set) {
     updateDetails.cc = uniqueCCList || []; // Use the CC email addresses if replying to all CC
     // If there is a selection, replace the body with the selection
     if (selection) {
-      console.log(selection);
       updateDetails.body = replaceBodyWithSelection(selection, updateDetails);
-      console.log("Updated body with selection:", updateDetails.body);
     }
     await browser.compose.setComposeDetails(replyTab.id, updateDetails);
     replyList.length = 0; // Clear the reply list after sending
@@ -445,6 +464,14 @@ browser.menus.onShown.addListener(async () => {
           enabled: false,
         });
         menuItemIds.push(`sep-${item.toLowerCase()}`);
+        await browser.menus.create({
+          id: `replysep-${item.toLowerCase()}`,
+          title: item,
+          contexts: ["message_display_action_menu"],
+          enabled: false,
+          parentId: "reply-to",
+        });
+        menuItemIds.push(`replysep-${item.toLowerCase()}`);
       }
     }
 
