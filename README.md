@@ -29,16 +29,8 @@ The available features include:
 
 ## 2 - Installation
 
-Since the beta version of the plugin is not yet approved by Mozilla, it is not on the extension marketplace and must be installed manually: <br>
-
-1. Download the `Better_reply.xpi` file from the project's GitHub repository. <br>
-2. Open Thunderbird. <br>
-3. Go to the `Tools` > `Add-ons and Themes` menu. <br>
-   <img src="images/tools_addon_menu.png"><br>
-4. Click the gear icon in the top-right corner, then select `Install Add-on From File...`. <br>
-   <img src="images/download_extension_from_file.png"><br>
-5. Select the downloaded `Better_reply.xpi` file. <br>
-6. Confirm the installation. <br>
+Search `Better Reply` from the official add-ons store and select this one :<br>
+<img src="images/Store_image_eng.png"><br>
 
 ## 3 - Usage
 
@@ -46,25 +38,25 @@ To use the plugin, click on the `Reply to Some` menu
 in the toolbar of the selected message in Thunderbird.  
 This will open a menu with all email addresses found in the email,
 including those in the `From`, `To`, `CC`, `Reply-To`, and email body fields.<br>
-<img src="images/Illustration-tri.png"><br>
+<img src="images/Illustration-tri_eng.png"><br>
 Several actions are available in this menu:
 
 - `Reply to` : a dropdown menu that lets you directly reply to a specific email address _(outlined in blue above)_. <br> ⚠️ This menu is always sorted alphabetically!,
 - `Reply All with CC` : replies by placing the recipients in the `To` field (sender) and `CC` field (remaining recipients), unlike Thunderbird’s default `Reply All` button which places all recipients in their original fields _(outlined in white below)_,
 - `Reply to Selected List` : lets you reply to all email addresses after selecting them from the list _(outlined in green below)_,
 - `Clear List` : clears the list of selected email addresses _(outlined in yellow below)_.<br>
-  <img src="images/Illustration-sélection.png"><br>
+  <img src="images/Illustration-sélection_eng.png"><br>
 
 Clicking on an email address in the menu allows you to select it for later reply.
 A small blue arrow appears next to each selected email address,
 indicating it's ready to be used for a reply. _(outlined in orange above)_
 
 Right-clicking on the menu<br>
-<img src="images/Illustration-sélection-tri.png"><br>
+<img src="images/Illustration-sélection-tri_eng.png"><br>
 (or going into plugin settings: `Tools` > `Add-ons and Themes`,
 then selecting `Add-on Options`, the wrench 🔧 icon for `Better Reply` in the installed extensions list) <br>
 <img src="images/Illustration-settings.png"> <br>
-<img src="images/Illustration-settings-tri.png"> <br>
+<img src="images/Illustration-settings-tri_eng.png"> <br>
 lets you access the sorting options for email addresses:
 
 - `Alphabetical` : sorts email addresses from A to Z _(outlined in blue above)_.

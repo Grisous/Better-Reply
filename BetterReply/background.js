@@ -38,20 +38,35 @@ async function findEmailAddresses() {
   const isNoReply = (email) =>
     /^(.*[._-])?(do[._-]?not|no)[._-]?reply([._+-].*)?@/i.test(email);
 
-  const ccEmails =
-    fullMessage.headers.cc?.[0]
-      .match(emailPattern)
-      .map((email) => email.toLowerCase())
-      .filter((email) => !isNoReply(email)) || [];
-  const toEmails =
-    fullMessage.headers.to?.[0]
-      .match(emailPattern)
-      .filter((email) => !isNoReply(email)) || [];
-  const replyToEmails =
-    fullMessage.headers["reply-to"]?.[0]
-      .match(emailPattern)
-      .map((email) => email.toLowerCase())
-      .filter((email) => !isNoReply(email)) || [];
+  let ccEmails = [];
+  if (fullMessage.headers.to?.[0].match(emailPattern) != null) {
+    ccEmails =
+      fullMessage.headers.cc?.[0]
+        .match(emailPattern)
+        .map((email) => email.toLowerCase())
+        .filter((email) => !isNoReply(email)) || [];
+  } else {
+    ccEmails = [];
+  }
+  let toEmails = [];
+  if (fullMessage.headers.to?.[0].match(emailPattern) != null) {
+    toEmails =
+      fullMessage.headers.to?.[0]
+        .match(emailPattern)
+        .filter((email) => !isNoReply(email)) || [];
+  } else {
+    toEmails = [];
+  }
+  let replyToEmails = [];
+  if (fullMessage.headers["reply-to"]?.[0].match(emailPattern) != null) {
+    replyToEmails =
+      fullMessage.headers["reply-to"]?.[0]
+        .match(emailPattern)
+        .map((email) => email.toLowerCase())
+        .filter((email) => !isNoReply(email)) || [];
+  } else {
+    replyToEmails = [];
+  }
 
   let part = "";
   // If there are no inline text parts, use nothing
@@ -501,7 +516,6 @@ browser.menus.onHidden.addListener(async () => {
 // Create a context menu item
 (async () => {
   try {
-    // <= End of code from therealrobster
     // create item for replying to one email
     await browser.menus.create({
       id: "reply-to",
