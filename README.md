@@ -37,14 +37,14 @@ Search `Better Reply` from the official add-ons store and select this one :<br>
 To use the plugin, click on the `Reply to Some` menu
 in the toolbar of the selected message in Thunderbird.  
 This will open a menu with all email addresses found in the email,
-including those in the `From`, `To`, `CC`, `Reply-To`, and email body fields.<br>
+including those in the `From`, `To`, `CC`, `Reply-To`, and email body fields.<a id="Reply-to-img"></a><br>
 <img src="images/Illustration-tri_eng.png"><br>
 Several actions are available in this menu:
 
 - `Reply to` : a dropdown menu that lets you directly reply to a specific email address _(outlined in blue above)_.
 - `Reply All with CC` : replies by placing the recipients in the `To` field (sender) and `CC` field (remaining recipients), unlike Thunderbird’s default `Reply All` button which places all recipients in their original fields _(outlined in white below)_,
 - `Reply to Selected List` : lets you reply to all email addresses after selecting them from the list _(outlined in green below)_,
-- `Clear List` : clears the list of selected email addresses _(outlined in yellow below)_.<br>
+- `Clear List` : clears the list of selected email addresses _(outlined in yellow below)_.<a id="clear-list"></a><br>
   <img src="images/Illustration-sélection_eng.png"><br>
 
 Clicking on an email address in the menu allows you to select it for later reply.
@@ -59,10 +59,10 @@ then selecting `Add-on Options`, the wrench 🔧 icon for `Better Reply` in the 
 <img src="images/Illustration-settings-tri_eng.png"> <br>
 lets you access the sorting options for email addresses:
 
-- `Alphabetical` : sorts email addresses from A to Z _(outlined in blue above)_.
+- `Alphabetical` : sorts email addresses from A to Z _<a href="#Reply-to-img">(outlined in blue above)</a>_.
 - `By Category` : sorts email addresses by category
   (for example, addresses found in `From`, `To`, `CC`, `Reply-To`, and the email body
-  are grouped accordingly). _(outlined in gray above)_
+  are grouped accordingly). _<a href="#clear-list">(screen after Clear List above)</a>_
 
 A safeguard is included to preserve anonymity if an email was received via BCC:
 when replying to someone other than the sender of a BCC’d email,
