@@ -10,7 +10,6 @@ browser.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === "install") {
     // Remove existing local configuration
     await browser.storage.local.clear();
-    console.log("Local configuration cleared on install.");
   }
 });
 
@@ -175,9 +174,6 @@ async function findEmailAddresses() {
       break;
     }
   }
-
-  console.log("Found email addresses:", emails);
-
   // Code from therealrobster =>
 
   // Normalize emails to lowercase and remove duplicates
