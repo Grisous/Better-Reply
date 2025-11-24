@@ -41,10 +41,10 @@ including those in the `From`, `To`, `CC`, `Reply-To`, and email body fields.<a 
 <img src="images/Illustration-tri_eng.png"><br>
 Several actions are available in this menu:
 
-- `Reply to` : a dropdown menu that lets you directly reply to a specific email address _(outlined in blue above)_.
-- `Reply All with CC` : replies by placing the recipients in the `To` field (sender) and `CC` field (remaining recipients), unlike Thunderbird’s default `Reply All` button which places all recipients in their original fields _(outlined in white below)_,
+- `Reply directly to` : a dropdown menu that lets you directly reply to a specific email address _(outlined in blue above)_.
+- `Reply to All as CC` : replies by placing the recipients in the `To` field (sender) and `CC` field (remaining recipients), unlike Thunderbird’s default `Reply All` button which places all recipients in their original fields _(outlined in white below)_,
 - `Reply to Selected List` : lets you reply to all email addresses after selecting them from the list _(outlined in green below)_,
-- `Clear List` : clears the list of selected email addresses _(outlined in yellow below)_.<a id="clear-list"></a><br>
+- `Empty reply List` : clears the list of selected email addresses _(outlined in yellow below)_.<a id="clear-list"></a><br>
   <img src="images/Illustration-sélection_eng.png"><br>
 
 Clicking on an email address in the menu allows you to select it for later reply.
