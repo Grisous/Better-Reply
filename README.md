@@ -34,7 +34,7 @@ Search `Better Reply` from the official add-ons store and select this one :<br>
 
 ## 3 - Usage
 
-To use the plugin, click on the `Reply to Some` menu
+To use the plugin, click on the `Better reply to` menu
 in the toolbar of the selected message in Thunderbird.  
 This will open a menu with all email addresses found in the email,
 including those in the `From`, `To`, `CC`, `Reply-To`, and email body fields.<a id="Reply-to-img"></a><br>
