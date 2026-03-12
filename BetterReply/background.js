@@ -468,21 +468,30 @@ browser.menus.onShown.addListener(async () => {
         await createOrUpdateMenuItem(id, item);
       } else {
         // Create a separator for non-email items
-        await browser.menus.create({
-          id: `sep-${item.toLowerCase()}`,
-          title: item,
-          contexts: ["message_display_action_menu"],
-          enabled: false,
-        });
-        menuItemIds.push(`sep-${item.toLowerCase()}`);
-        await browser.menus.create({
-          id: `replysep-${item.toLowerCase()}`,
-          title: item,
-          contexts: ["message_display_action_menu"],
-          enabled: false,
-          parentId: "reply-to",
-        });
-        menuItemIds.push(`replysep-${item.toLowerCase()}`);
+        try {
+          await browser.menus.create({
+            id: `sep-${item.toLowerCase()}`,
+            title: item,
+            contexts: ["message_display_action_menu"],
+            enabled: false,
+          });
+          menuItemIds.push(`sep-${item.toLowerCase()}`);
+        } catch (e) {
+          console.error(`Failed to create separator sep-${item?.toLowerCase()}:`, e);
+        }
+
+        try {
+          await browser.menus.create({
+            id: `replysep-${item.toLowerCase()}`,
+            title: item,
+            contexts: ["message_display_action_menu"],
+            enabled: false,
+            parentId: "reply-to",
+          });
+          menuItemIds.push(`replysep-${item.toLowerCase()}`);
+        } catch (e) {
+          console.error(`Failed to create separator replysep-${item?.toLowerCase()}:`, e);
+        }
       }
     }
 
