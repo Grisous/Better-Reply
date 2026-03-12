@@ -38,7 +38,7 @@ async function findEmailAddresses() {
     /^(.*[._-])?(do[._-]?not|no)[._-]?reply([._+-].*)?@/i.test(email);
 
   let ccEmails = [];
-  if (fullMessage.headers.to?.[0].match(emailPattern) != null) {
+  if (fullMessage.headers.cc?.[0].match(emailPattern) != null) {
     ccEmails =
       fullMessage.headers.cc?.[0]
         .match(emailPattern)
