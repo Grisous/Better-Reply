@@ -18,10 +18,13 @@ browser.runtime.onInstalled.addListener(async (details) => {
 // Find the email addresses in the body
 async function findEmailAddresses() {
   let tabs = await browser.tabs.query({ active: true, currentWindow: true });
+  if (!tabs[0]) return []; //stop if no tab is opened
+
   const messages = await browser.messageDisplay.getDisplayedMessages(
     tabs[0].id
   );
   const message = messages?.messages?.[0]; // Get the first message if available
+  if (!message) return [];  //stop if no message is opened
 
   // Find the 'from' email address
   const fromEmail = message.author.match(emailPattern)?.[0]; // Take the first match, if any
