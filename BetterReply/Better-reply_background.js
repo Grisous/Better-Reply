@@ -19,9 +19,13 @@ browser.runtime.onInstalled.addListener(async (details) => {
 async function findEmailAddresses() {
   let tabs = await browser.tabs.query({ active: true, currentWindow: true });
   const messages = await browser.messageDisplay.getDisplayedMessages(
-    tabs[0].id
+    tabs[0].id,
   );
   const message = messages?.messages?.[0]; // Get the first message if available
+  if (!message) {
+    console.warn("No message found in the current tab.");
+    return;
+  }
 
   // Find the 'from' email address
   const fromEmail = message.author.match(emailPattern)?.[0]; // Take the first match, if any
@@ -38,7 +42,7 @@ async function findEmailAddresses() {
     /^(.*[._-])?(do[._-]?not|no)[._-]?reply([._+-].*)?@/i.test(email);
 
   let ccEmails = [];
-  if (fullMessage.headers.to?.[0].match(emailPattern) != null) {
+  if (fullMessage.headers.cc?.[0].match(emailPattern) != null) {
     ccEmails =
       fullMessage.headers.cc?.[0]
         .match(emailPattern)
@@ -85,7 +89,7 @@ async function findEmailAddresses() {
       // Add emails from the body, filtering out noreply addresses
       // Extract emails from the body, filter out noreply addresses, and add them
       const bodyEmails = (part.match(emailPattern) || []).filter(
-        (email) => !isNoReply(email)
+        (email) => !isNoReply(email),
       );
       emails.push(...bodyEmails);
 
@@ -106,28 +110,28 @@ async function findEmailAddresses() {
       if (toEmails.length > 0) {
         // Only add CC emails that are not already in emails
         const uniqueTo = toEmails.filter(
-          (cc) => !emails.includes(cc.toLowerCase())
+          (cc) => !emails.includes(cc.toLowerCase()),
         );
         if (uniqueTo.length > 0) {
           emails.push(browser.i18n.getMessage("to"));
           emails.push(
             ...uniqueTo.sort((a, b) =>
-              a.toLowerCase().localeCompare(b.toLowerCase())
-            )
+              a.toLowerCase().localeCompare(b.toLowerCase()),
+            ),
           );
         }
       }
       if (ccEmails.length > 0) {
         // Only add CC emails that are not already in emails
         const uniqueCc = ccEmails.filter(
-          (cc) => !emails.includes(cc.toLowerCase())
+          (cc) => !emails.includes(cc.toLowerCase()),
         );
         if (uniqueCc.length > 0) {
           emails.push(browser.i18n.getMessage("cc"));
           emails.push(
             ...uniqueCc.sort((a, b) =>
-              a.toLowerCase().localeCompare(b.toLowerCase())
-            )
+              a.toLowerCase().localeCompare(b.toLowerCase()),
+            ),
           );
         }
       }
@@ -137,14 +141,14 @@ async function findEmailAddresses() {
       ) {
         // Only add reply-to emails that are not already in emails
         const uniqueReplyTo = replyToEmails.filter(
-          (r) => !emails.includes(r.toLowerCase())
+          (r) => !emails.includes(r.toLowerCase()),
         );
         if (uniqueReplyTo.length > 0) {
           emails.push(browser.i18n.getMessage("reply_to"));
           emails.push(
             ...uniqueReplyTo.sort((a, b) =>
-              a.toLowerCase().localeCompare(b.toLowerCase())
-            )
+              a.toLowerCase().localeCompare(b.toLowerCase()),
+            ),
           );
         }
       }
@@ -160,14 +164,14 @@ async function findEmailAddresses() {
             .map((email) => email.toLowerCase())
             .filter((email) => !isNoReply(email)) || [];
         const uniqueContent = contentEmails.filter(
-          (e) => !emails.includes(e.toLowerCase())
+          (e) => !emails.includes(e.toLowerCase()),
         );
         if (uniqueContent.length > 0) {
           emails.push(browser.i18n.getMessage("content emails"));
           emails.push(
             ...uniqueContent.sort((a, b) =>
-              a.toLowerCase().localeCompare(b.toLowerCase())
-            )
+              a.toLowerCase().localeCompare(b.toLowerCase()),
+            ),
           );
         }
       }
@@ -180,23 +184,26 @@ async function findEmailAddresses() {
   return [...new Set(emails.map((email) => email.toLowerCase()))];
 }
 
-// Global variable to track menu item IDs
-const menuItemIds = [];
+// Use a set to track menu item IDs
+const sessionMenuItemIds = new Set();
 
 // Function to remove menu items by their IDs
 async function removeMenuItems(ids) {
   //console.log("Removing menu items...");
   for (const id of ids) {
     try {
-      //console.log(`Removing menu item: ${id}`);
+      console.log(`Removing menu item: ${id}`);
       await browser.menus.remove(id);
     } catch (error) {
       console.error(`Failed to remove menu item ${id}:`, error);
     }
   }
-}
 
-// <= End of code from therealrobster
+  // <= End of code from therealrobster
+
+  // Remove the IDs from the sessionMenuItemIds set
+  ids.forEach((id) => sessionMenuItemIds.delete(id));
+}
 
 /**
  * Function to select or deselect an email address.
@@ -336,7 +343,7 @@ async function composeReply(toList = replyList, ccList = Set) {
       const toList = toListArray.map((email) => email[0].toLowerCase());
       // filter out the accountEmail from toList
       const filteredToList = toList.filter(
-        (email) => email.toLowerCase() !== accountEmail.toLowerCase()
+        (email) => email.toLowerCase() !== accountEmail.toLowerCase(),
       );
       // push toList to the ccList and clear duplicates
       const uniqueCCSet = new Set([...ccList, ...filteredToList]);
@@ -348,7 +355,7 @@ async function composeReply(toList = replyList, ccList = Set) {
     // If toList is empty, use the sender email address
     if (toList.length === 0) {
       const fullMessage = await browser.messages.getFull(
-        selectedMessage.messages[0].id
+        selectedMessage.messages[0].id,
       );
       const fromEmail = fullMessage.headers.from?.[0].match(emailPattern)?.[0];
       if (fromEmail) {
@@ -371,37 +378,26 @@ async function composeReply(toList = replyList, ccList = Set) {
     console.warn("No message selected to reply to.");
   }
 }
-// Code from therealrobster =>
 
 // Function to create or update menu items
 async function createOrUpdateMenuItem(id, title) {
   // Check if the menu item ID is already tracked
-  if (menuItemIds.includes(id)) {
+  if (sessionMenuItemIds.has(id)) {
     console.log(`Menu item ${id} already exists, skipping creation.`);
     return;
   }
 
-  // <= End of code from therealrobster
   const isSelected = replyList.includes(title);
 
+  // Create the main menu item with the appropriate icon based on selection state
   try {
-    // Create the main menu item
     await browser.menus.create({
       id: `${id}`,
       contexts: ["message_display_action_menu"],
       title: title,
       icons: isSelected ? "images/arrow_reply_16px.svg" : undefined,
     });
-    // create a sub-menu item for replying to one email address
-    await browser.menus.create({
-      id: `reply-${id}`,
-      title: title,
-      contexts: ["message_display_action_menu"],
-      parentId: "reply-to",
-    });
-    menuItemIds.push(`reply-${id}`); // Track the ID of the reply sub-menu item
-    // Code from therealrobster =>
-    menuItemIds.push(id); // Track the ID of the created menu item
+    sessionMenuItemIds.add(id); // Track the ID in session storage
   } catch (error) {
     console.error(`Failed to create menu item ${id}:`, error);
   }
@@ -409,8 +405,8 @@ async function createOrUpdateMenuItem(id, title) {
 
 // Function to remove all tracked menu items
 async function removeAllMenuItems() {
-  await removeMenuItems(menuItemIds);
-  menuItemIds.length = 0; // Clear the tracked IDs
+  await removeMenuItems(Array.from(sessionMenuItemIds));
+  sessionMenuItemIds.clear(); // Clear the tracked IDs
 }
 
 // Add a listener for the menus.onShown event
@@ -449,7 +445,7 @@ browser.menus.onShown.addListener(async () => {
         title: browser.i18n.getMessage(
           "found_email_address",
           // Filter email addresses to count only valid ones
-          emailAddresses.filter((email) => email.includes("@")).length
+          emailAddresses.filter((email) => email.includes("@")).length,
         ),
         enabled: false,
       });
@@ -468,21 +464,35 @@ browser.menus.onShown.addListener(async () => {
         await createOrUpdateMenuItem(id, item);
       } else {
         // Create a separator for non-email items
-        await browser.menus.create({
-          id: `sep-${item.toLowerCase()}`,
-          title: item,
-          contexts: ["message_display_action_menu"],
-          enabled: false,
-        });
-        menuItemIds.push(`sep-${item.toLowerCase()}`);
-        await browser.menus.create({
-          id: `replysep-${item.toLowerCase()}`,
-          title: item,
-          contexts: ["message_display_action_menu"],
-          enabled: false,
-          parentId: "reply-to",
-        });
-        menuItemIds.push(`replysep-${item.toLowerCase()}`);
+        try {
+          await browser.menus.create({
+            id: `sep-${item.toLowerCase()}`,
+            title: item,
+            contexts: ["message_display_action_menu"],
+            enabled: false,
+          });
+          sessionMenuItemIds.add(`sep-${item.toLowerCase()}`);
+        } catch (error) {
+          console.error(
+            `Failed to create separator menu item for ${item}:`,
+            error,
+          );
+        }
+        try {
+          await browser.menus.create({
+            id: `replysep-${item.toLowerCase()}`,
+            title: item,
+            contexts: ["message_display_action_menu"],
+            enabled: false,
+            parentId: "reply-to",
+          });
+          sessionMenuItemIds.add(`replysep-${item.toLowerCase()}`);
+        } catch (error) {
+          console.error(
+            `Failed to create reply separator menu item for ${item}:`,
+            error,
+          );
+        }
       }
     }
 
@@ -598,10 +608,10 @@ browser.mailTabs.onSelectedMessagesChanged.addListener(() => {
 async function imCCI(reply = replyList) {
   let tabs = await browser.tabs.query({ active: true, currentWindow: true });
   const messages = await browser.messageDisplay.getDisplayedMessages(
-    tabs[0].id
+    tabs[0].id,
   );
   const fullMessage = await browser.messages.getFull(
-    messages?.messages?.[0].id
+    messages?.messages?.[0].id,
   );
   const from = messages?.messages?.[0].author.match(emailPattern)?.[0];
   if (
@@ -654,13 +664,13 @@ browser.menus.onClicked.addListener(async (info) => {
         currentWindow: true,
       });
       const messages = await browser.messageDisplay.getDisplayedMessages(
-        tabs[0].id
+        tabs[0].id,
       );
       if (messages && messages.messages && messages.messages.length > 0) {
         // get cc list that matches the email pattern
         const ccList =
           messages.messages[0].ccList.map((email) =>
-            email.match(emailPattern)
+            email.match(emailPattern),
           )[0] || [];
         // get the 'to' email address.es
         const toList = messages.messages[0].recipients;
