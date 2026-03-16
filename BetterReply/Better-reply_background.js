@@ -382,7 +382,7 @@ async function composeReply(toList = replyList, ccList = Set) {
 // Function to create or update menu items
 async function createOrUpdateMenuItem(id, title) {
   // Check if the menu item ID is already tracked
-  if (sessionMenuItemIds.has(id)) {
+  if (sessionMenuItemIds.has(id) || sessionMenuItemIds.has("reply-" + id)) {
     console.log(`Menu item ${id} already exists, skipping creation.`);
     return;
   }
@@ -400,6 +400,18 @@ async function createOrUpdateMenuItem(id, title) {
     sessionMenuItemIds.add(id); // Track the ID in session storage
   } catch (error) {
     console.error(`Failed to create menu item ${id}:`, error);
+  }
+  // create a sub-menu item for replying to one email address
+  try {
+    await browser.menus.create({
+      id: `reply-${id}`,
+      title: title,
+      contexts: ["message_display_action_menu"],
+      parentId: "reply-to",
+    });
+    sessionMenuItemIds.add(`reply-${id}`); // Track the ID of the reply sub-menu item
+  } catch (error) {
+    console.error(`Failed to create reply menu item for ${id}:`, error);
   }
 }
 
