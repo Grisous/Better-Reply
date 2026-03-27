@@ -184,27 +184,6 @@ async function findEmailAddresses() {
   return [...new Set(emails.map((email) => email.toLowerCase()))];
 }
 
-// Use a set to track menu item IDs
-const sessionMenuItemIds = new Set();
-
-// Function to remove menu items by their IDs
-async function removeMenuItems(ids) {
-  //console.log("Removing menu items...");
-  for (const id of ids) {
-    try {
-      console.log(`Removing menu item: ${id}`);
-      await browser.menus.remove(id);
-    } catch (error) {
-      console.error(`Failed to remove menu item ${id}:`, error);
-    }
-  }
-
-  // <= End of code from therealrobster
-
-  // Remove the IDs from the sessionMenuItemIds set
-  ids.forEach((id) => sessionMenuItemIds.delete(id));
-}
-
 /**
  * Function to select or deselect an email address.
  * @param {string} id - The ID of the menu item.
@@ -382,10 +361,6 @@ async function composeReply(toList = replyList, ccList = Set) {
 // Function to create or update menu items
 async function createOrUpdateMenuItem(id, title) {
   // Check if the menu item ID is already tracked
-  if (sessionMenuItemIds.has(id) || sessionMenuItemIds.has("reply-" + id)) {
-    console.log(`Menu item ${id} already exists, skipping creation.`);
-    return;
-  }
 
   const isSelected = replyList.includes(title);
 
@@ -397,7 +372,6 @@ async function createOrUpdateMenuItem(id, title) {
       title: title,
       icons: isSelected ? "images/arrow_reply_16px.svg" : undefined,
     });
-    sessionMenuItemIds.add(id); // Track the ID in session storage
   } catch (error) {
     console.error(`Failed to create menu item ${id}:`, error);
   }
@@ -409,7 +383,6 @@ async function createOrUpdateMenuItem(id, title) {
       contexts: ["message_display_action_menu"],
       parentId: "reply-to",
     });
-    sessionMenuItemIds.add(`reply-${id}`); // Track the ID of the reply sub-menu item
   } catch (error) {
     console.error(`Failed to create reply menu item for ${id}:`, error);
   }
@@ -417,8 +390,12 @@ async function createOrUpdateMenuItem(id, title) {
 
 // Function to remove all tracked menu items
 async function removeAllMenuItems() {
-  await removeMenuItems(Array.from(sessionMenuItemIds));
-  sessionMenuItemIds.clear(); // Clear the tracked IDs
+  try {
+    console.log(`Removing menu items`);
+    await browser.menus.removeAll();
+  } catch (error) {
+    console.error(`Failed to remove menu items:`, error);
+  }
 }
 
 // Add a listener for the menus.onShown event
@@ -429,6 +406,8 @@ browser.menus.onShown.addListener(async () => {
 
     // Call the function and handle the result
     const emailAddresses = await findEmailAddresses();
+
+    await createContextMenu(); // Create the base context menu items
 
     // Update the menu with the found email address count
     try {
@@ -483,7 +462,6 @@ browser.menus.onShown.addListener(async () => {
             contexts: ["message_display_action_menu"],
             enabled: false,
           });
-          sessionMenuItemIds.add(`sep-${item.toLowerCase()}`);
         } catch (error) {
           console.error(
             `Failed to create separator menu item for ${item}:`,
@@ -498,7 +476,6 @@ browser.menus.onShown.addListener(async () => {
             enabled: false,
             parentId: "reply-to",
           });
-          sessionMenuItemIds.add(`replysep-${item.toLowerCase()}`);
         } catch (error) {
           console.error(
             `Failed to create reply separator menu item for ${item}:`,
@@ -532,7 +509,7 @@ browser.menus.onHidden.addListener(async () => {
 });
 
 // Create a context menu item
-(async () => {
+async function createContextMenu() {
   try {
     // create item for replying to one email
     await browser.menus.create({
@@ -599,7 +576,9 @@ browser.menus.onHidden.addListener(async () => {
   } catch (error) {
     console.error(`Failed to create menu item my-menu-item:`, error);
   }
-})();
+}
+
+// createContextMenu(); // Create the base context menu items on extension load
 
 // Function to modify the menu
 async function modifyMenu() {
