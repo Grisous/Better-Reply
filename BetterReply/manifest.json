@@ -6,7 +6,7 @@
   "description": "__MSG_description__",
   "browser_specific_settings": {
     "gecko": {
-      "id": "betterreply@grisous.cc",
+      "id": "betterreply@yoursite.com",
       "strict_min_version": "128.0"
     }
   },
